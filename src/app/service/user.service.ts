@@ -14,19 +14,19 @@ export class UserService {
 
 
   registerUser(user: User): Observable<User> {
-    console.log('User to lambda => ', JSON.stringify(user));
+    console.log('User to lambda :=> ', JSON.stringify(user));
     let headers = { 'Action': 'Register' };
     return this.http.post<User>(this.POST_URL, user, { headers });
   }
 
   getUser(user: User): Observable<User> {
-    console.log('Username to lambda => ', user.username);
+    console.log('Username to lambda :=> ', user.username);
     let headers = { 'Action': 'Get' };
     return this.http.post<User>(this.POST_URL, user, { headers });
   }
 
   removeUser(user: User): Observable<User> {
-    console.log('Username to lambda => ', user.username);
+    console.log('Username to lambda :=> ', user.username);
     let headers = { 'Action': 'Delete' };
     return this.http.post<User>(this.POST_URL, user, { headers });
   }

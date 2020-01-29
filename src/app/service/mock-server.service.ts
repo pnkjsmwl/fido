@@ -13,7 +13,7 @@ export class MockServerService {
 
   constructor(private userservice: UserService) { }
 
-  /** This method returns a Uint8Array of char codes from charatcters of the random string 
+  /** This method returns a Uint8Array of Unicode of the charatcters of the random string 
    *  NOTE: char codes for string characters are their ASCII values
   */
   getChallenge() {

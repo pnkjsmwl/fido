@@ -11,37 +11,50 @@ export class WebAuthnService {
 
   webAuthn_register(user: User): Promise<CredentialType> {
 
-    const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
-
-      challenge: this.mockserver.getChallenge(),
-      rp: {
-        name: 'frontend-fido.s3.amazonaws.com'
-      },
-      user: {
-        id: Uint8Array.from(user.id, c => c.charCodeAt(0)),
-        name: user.username,
-        displayName: user.username
-      },
-      pubKeyCredParams:
-        [
-          { type: 'public-key', alg: -7 },
-          { type: 'public-key', alg: -35 },
-          { type: 'public-key', alg: -36 },
-          { type: 'public-key', alg: -257 },
-          { type: 'public-key', alg: -258 },
-          { type: 'public-key', alg: -259 },
-          { type: 'public-key', alg: -37 },
-          { type: 'public-key', alg: -38 },
-          { type: 'public-key', alg: -39 },
-          { type: 'public-key', alg: -8 }
-        ],
-      authenticatorSelection: {
-        requireResidentKey: false,
-        userVerification: 'required'
-      },
-      timeout: 60000,
-      attestation: "none"
+    const challenge: BufferSource = this.mockserver.getChallenge();
+    const rp: PublicKeyCredentialRpEntity = {
+      name: 'frontend-fido.s3.amazonaws.com'
     };
+    const userX: PublicKeyCredentialUserEntity = {
+      id: Uint8Array.from(user.id, c => c.charCodeAt(0)),
+      name: user.username,
+      displayName: user.username
+    };
+    const pubKeyCredParams: PublicKeyCredentialParameters[] =
+      [
+        { type: 'public-key', alg: -7 },
+        { type: 'public-key', alg: -35 },
+        { type: 'public-key', alg: -36 },
+        { type: 'public-key', alg: -257 },
+        { type: 'public-key', alg: -258 },
+        { type: 'public-key', alg: -259 },
+        { type: 'public-key', alg: -37 },
+        { type: 'public-key', alg: -38 },
+        { type: 'public-key', alg: -39 },
+        { type: 'public-key', alg: -8 }
+      ];
+    const authenticatorSelection: AuthenticatorSelectionCriteria = {
+      userVerification: 'required',
+      authenticatorAttachment: 'platform'
+    }
+
+    const timeout: number = 60000;
+    const attestation = "none"
+    const extensions: AuthenticationExtensionsClientInputs = {
+
+    }
+
+    const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
+      challenge: challenge,
+      rp: rp,
+      user: userX,
+      pubKeyCredParams: pubKeyCredParams,
+      authenticatorSelection: authenticatorSelection,
+      timeout: timeout,
+      attestation: attestation,
+      extensions: extensions
+    };
+
     console.log('publicKeyCredentialCreationOptions : ', publicKeyCredentialCreationOptions);
     return navigator.credentials.create({
       publicKey: publicKeyCredentialCreationOptions,
@@ -54,7 +67,8 @@ export class WebAuthnService {
       console.log('credentials id : ', c.credentialId);
       return {
         type: 'public-key',
-        id: Uint8Array.from(Object.values(c.credentialId))
+        id: Uint8Array.from(Object.values(c.credentialId)),
+        transports: Array.from(["internal"])
       };
     });
 
@@ -62,7 +76,8 @@ export class WebAuthnService {
 
     const credentialRequestOptions: PublicKeyCredentialRequestOptions = {
       challenge: this.mockserver.getChallenge(),
-      allowCredentials: allowCredentials
+      allowCredentials: allowCredentials,
+      userVerification: "required"
     };
 
     return navigator.credentials.get({
