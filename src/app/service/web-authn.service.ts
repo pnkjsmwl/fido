@@ -39,7 +39,8 @@ export class WebAuthnService {
     }
 
     const timeout: number = 60000;
-    const attestation = "none"
+    /* Valid values for attestation : "none" | "indirect" | "direct" */
+    const attestation = "direct"
     const extensions: AuthenticationExtensionsClientInputs = {
 
     }

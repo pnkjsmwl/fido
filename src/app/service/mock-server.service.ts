@@ -28,16 +28,20 @@ export class MockServerService {
 
   registerCredential(user: User, credential: PublicKeyCredential): User {
     const authData = this.getAuthData(credential);
+
     const credentialIdLength = this.getCredentialIdLength(authData);
+    console.log('credentialIdLength : ', credentialIdLength);
+
     const credentialId = authData.slice(55, 55 + credentialIdLength);
+    console.log('credentialId : ', credentialId);
 
     const publicKeyBytes: Uint8Array = authData.slice(55 + credentialIdLength);
+    console.log('publicKeyBytes : ', publicKeyBytes);
+
     const publicKeyObject = CBOR.decode(publicKeyBytes.buffer);
     console.log('Public Key Object : ', publicKeyObject);
 
     const valid = true;
-    console.log('credentialId : ', credentialId);
-    console.log('publicKeyBytes : ', publicKeyBytes);
     if (valid) {
       user.credentials.push({
         credentialId: credentialId,
@@ -55,10 +59,13 @@ export class MockServerService {
     const clientDataObj: ClientDataObj = JSON.parse(decodedClientData);
     console.log('Client Data Object : ', clientDataObj);
 
+    /* CBOR : Concise Binary Object Representation */
     const decodedAttestationObject: DecodedAttestationObj = CBOR.decode((credential.response as any).attestationObject);
     console.log('Decoded Attestation Object : ', decodedAttestationObject);
 
+    /* Complete authData explained at https://developer.mozilla.org/en-US/docs/Web/API/AuthenticatorAssertionResponse/authenticatorData  */
     const { authData } = decodedAttestationObject;
+    // OR const authData = decodedAttestationObject.authData;
     console.log('Auth Data : ', authData);
 
     return authData;
@@ -66,7 +73,11 @@ export class MockServerService {
 
   getCredentialIdLength(authData: Uint8Array) {
     const dataView = new DataView(new ArrayBuffer(2));
+    console.log('dataView : ', dataView);
+    /* 53 and 55 are the bytes count, check authData response structure */
     const idLengthBytes = authData.slice(53, 55);
+    console.log('idLengthBytes : ', idLengthBytes);
+
     idLengthBytes.forEach((value, i) => dataView.setUint8(i, value));
     return dataView.getUint16(0);
   }

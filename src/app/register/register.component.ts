@@ -50,7 +50,7 @@ export class RegisterComponent implements OnInit {
               console.log('Error occured', error);
             });
         } else {
-          alert('Username ' + user.username + ' is taken, please choose another.');
+          alert('Username "' + user.username + '" is taken, please choose another.');
           this.username = '';
         }
       });
