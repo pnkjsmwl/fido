@@ -34,6 +34,7 @@ export class LoginComponent implements OnInit {
       console.log('user : ', user);
       this.webAuth.webAuthn_login(user)
         .then((resp) => {
+          console.log('Login Response : ', resp);
           sessionStorage.setItem('user', this.username);
           alert('Authentication went fine !!');
           this.router.navigate(['/home']);
