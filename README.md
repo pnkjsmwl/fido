@@ -1,6 +1,6 @@
 # Fido
-NOTE: this apps works on Windows 10 and Android platform.
-Simple project to demo FIDO2 working, user can register themselves using only username and then login to the page again by using only username, the authentication happens using the users device (authenticator) where the user provides a gesture such as PIN, fingerprint or through face recognition.
+NOTE: This apps works on Windows 10 and Android platform.
+Simple project to demo FIDO2 working, user can register themselves using only username and then login to the page again by using only username, the authentication happens using the user's device (authenticator) where the user provides a gesture such as PIN, fingerprint or through face recognition.
 
 ## Development server
 
