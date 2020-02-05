@@ -1,5 +1,5 @@
 export interface DecodedAttestationObj {
-    attestationStatement: {
+    attStmt: {
         alg: number;
         sig: Uint8Array;
     },

@@ -33,14 +33,15 @@ export class RegisterComponent implements OnInit {
     if (this.webAuthnAvailable) {
       this.mockserver.getUser(user).subscribe(userDB => {
         if (userDB == null) {
-          this.webAuth.webAuthn_register(user)
+          const options = this.webAuth.registerOptions(user);
+          this.webAuth.register(options)
             .then((credential: PublicKeyCredential) => {
-              console.log('credentials.create RESPONSE', credential);
-              const userx = this.mockserver.registerCredential(user, credential);
+              console.log('Register credential response : ', credential);
+              const userx = this.mockserver.registerCredential(user, credential, options);
               this.mockserver.registerUser(userx).subscribe(
                 user => {
                   console.log("Response : ", user);
-                  this.router.navigate(['/login'], { queryParams: { name: user.username } });
+                  this.router.navigate(['/login']);
                 },
                 err => {
                   console.log("Error : ", err);

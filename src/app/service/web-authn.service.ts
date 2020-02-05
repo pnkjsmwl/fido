@@ -9,11 +9,22 @@ export class WebAuthnService {
 
   constructor(private mockserver: MockServerService) { }
 
-  webAuthn_register(user: User): Promise<CredentialType> {
+  register(options: PublicKeyCredentialCreationOptions): Promise<CredentialType> {
+    return navigator.credentials.create({
+      publicKey: options
+    });
+  }
 
-    const challenge: BufferSource = this.mockserver.getChallenge();
+  login(options: PublicKeyCredentialRequestOptions): Promise<CredentialType> {
+    return navigator.credentials.get({
+      publicKey: options
+    });
+  }
+
+  registerOptions(user: User) {
     const rp: PublicKeyCredentialRpEntity = {
-      name: 'frontend-fido.s3.amazonaws.com'
+      name: 'frontend-fido.s3.amazonaws.com',
+      id: window.location.hostname
     };
     const userX: PublicKeyCredentialUserEntity = {
       id: Uint8Array.from(user.id, c => c.charCodeAt(0)),
@@ -46,7 +57,7 @@ export class WebAuthnService {
     }
 
     const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
-      challenge: challenge,
+      challenge: this.mockserver.getChallenge(),
       rp: rp,
       user: userX,
       pubKeyCredParams: pubKeyCredParams,
@@ -57,15 +68,13 @@ export class WebAuthnService {
     };
 
     console.log('publicKeyCredentialCreationOptions : ', publicKeyCredentialCreationOptions);
-    return navigator.credentials.create({
-      publicKey: publicKeyCredentialCreationOptions,
-    });
-
+    return publicKeyCredentialCreationOptions;
   }
 
-  webAuthn_login(user: User): Promise<CredentialType> {
+  loginOptions(user: User) {
     const allowCredentials: PublicKeyCredentialDescriptor[] = user.credentials.map(c => {
       console.log('credentials id : ', c.credentialId);
+      console.log('public key : ', c.publicKey);
       return {
         type: 'public-key',
         id: Uint8Array.from(Object.values(c.credentialId)),
@@ -80,9 +89,8 @@ export class WebAuthnService {
       allowCredentials: allowCredentials,
       userVerification: "required"
     };
-
-    return navigator.credentials.get({
-      publicKey: credentialRequestOptions
-    });
+    console.log('credentialRequestOptions : ', credentialRequestOptions);
+    return credentialRequestOptions;
   }
+
 }

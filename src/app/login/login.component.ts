@@ -32,9 +32,11 @@ export class LoginComponent implements OnInit {
     }
     this.mockserver.getUser(user).subscribe(user => {
       console.log('user : ', user);
-      this.webAuth.webAuthn_login(user)
-        .then((resp) => {
-          console.log('Login Response : ', resp);
+      const loginOptions = this.webAuth.loginOptions(user);
+      this.webAuth.login(loginOptions)
+        .then((credential: PublicKeyCredential) => {
+          console.log('Login Response : ', credential);
+          this.mockserver.loginCredential(credential, loginOptions);
           sessionStorage.setItem('user', this.username);
           alert('Authentication went fine !!');
           this.router.navigate(['/home']);
